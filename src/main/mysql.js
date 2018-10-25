@@ -90,4 +90,4 @@ class MySQLlDoc {
 
 }
 
-module.exports = MySQLlDoc;
+export default MySQLlDoc;
