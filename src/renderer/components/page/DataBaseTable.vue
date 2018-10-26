@@ -14,19 +14,19 @@
             <el-main>
                 <el-form :inline="true">
                     <el-form-item
-                        label="字段前缀">
+                            label="字段前缀">
                         <el-input v-model="generateConfig.columnPrefix"></el-input>
                     </el-form-item>
                     <el-form-item
-                        label="表前缀">
+                            label="表前缀">
                         <el-input v-model="generateConfig.tablePrefix"></el-input>
                     </el-form-item>
                     <el-form-item
-                        label="pojo包">
+                            label="pojo包">
                         <el-input v-model="generateConfig.pojoPackage"></el-input>
                     </el-form-item>
                     <el-form-item
-                        label="dao包">
+                            label="dao包">
                         <el-input v-model="generateConfig.daoPackage"></el-input>
                     </el-form-item>
                     <el-form-item>
@@ -40,31 +40,31 @@
                     <el-col>mapper名:{{table.mapperName}}</el-col>
                 </el-row>
                 <el-table
-                    :data="table.columns">
+                        :data="table.columns">
                     <el-table-column
-                        label="字段名"
-                        prop="name">
+                            label="字段名"
+                            prop="name">
                     </el-table-column>
 
                     <el-table-column
-                        label="字段类型"
-                        prop="typeName">
+                            label="字段类型"
+                            prop="typeName">
                     </el-table-column>
 
                     <el-table-column
-                        label="备注"
-                        prop="remark">
+                            label="备注"
+                            prop="remark">
                     </el-table-column>
 
                     <el-table-column
-                        label="字段驼峰">
+                            label="字段驼峰">
                         <template slot-scope="scope">
                             <span>{{ scope.row.camel }}</span>
                         </template>
                     </el-table-column>
 
                     <el-table-column
-                        label="JAVA类型">
+                            label="JAVA类型">
                         <template slot-scope="scope">
                             <span>{{ scope.row.javaType }}</span>
                         </template>
@@ -85,10 +85,10 @@ import java.util.Date;
 @Slf4j
 public class {{table.pojoName}} {
 </pre>
-<pre class="code" v-for="(item, index) in table.columns">
+                        <pre class="code" v-for="(item, index) in table.columns">
     private {{item.javaType}} {{item.camel}};
 </pre>
-<pre class="code">
+                        <pre class="code">
 }
 </pre>
                     </div>
@@ -97,16 +97,17 @@ public class {{table.pojoName}} {
                     <p>DAO：</p>
                     <el-button @click="copy('daoContent')">复制</el-button>
                     <el-popover
-                        placement="top"
-                        width="40"
-                        trigger="hover"
-                        content="点击复制">
+                            placement="top"
+                            width="40"
+                            trigger="hover"
+                            content="点击复制">
                         <div slot="reference" @click="copy('daoContent')" id="daoContent" class="codeContent">
 <pre class="code">package {{generateConfig.daoPackage}};
 
 import {{generateConfig.pojoPackage}}.{{table.pojoName}};
 public interface {{table.pojoName}}Mapper {
-    int deleteByPrimaryKey(Integer id, Integer version);
+    int deleteByPrimaryKey(@Param("id") Integer id,@Param("version") Integer version);
+    int logicDelete(@Param("id") Integer id,@Param("version") Integer version);
     int insertSelective({{table.pojoName}} {{table.pojoCamelName}});
     {{table.pojoName}} selectByPrimaryKey(Integer id);
     int updateByPrimaryKeySelective({{table.pojoName}} {{table.pojoCamelName}});
@@ -125,7 +126,7 @@ public interface {{table.pojoName}}Mapper {
 &lt;mapper namespace=&quot;{{generateConfig.daoPackage}}.{{table.pojoName}}Mapper&quot;&gt;
     &lt;sql id=&quot;Base_Column_List&quot;&gt;
 </pre>
-<pre class="code" v-for="(item, index) in table.columns">
+                        <pre class="code" v-for="(item, index) in table.columns">
 <pre v-if="index < table.columns.length-1">
     {{item.name}} {{item.camel}},
 </pre>
@@ -133,10 +134,10 @@ public interface {{table.pojoName}}Mapper {
     {{item.name}} {{item.camel}}
 </pre>
 </pre>
-<pre class="code">
+                        <pre class="code">
     &lt;/sql&gt;
 </pre>
-<pre class="code">
+                        <pre class="code">
     &lt;select id=&quot;selectByPrimaryKey&quot; resultType=&quot;{{generateConfig.pojoPackage}}.{{table.pojoName}}&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
         select
         &lt;include refid=&quot;Base_Column_List&quot;/&gt;
@@ -144,18 +145,25 @@ public interface {{table.pojoName}}Mapper {
         where id = #{id}
     &lt;/select&gt;
 </pre>
-<pre class="code">
+                        <pre class="code">
     &lt;delete id=&quot;deleteByPrimaryKey&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
         delete from {{table.tableName}}
         where id = #{id}
     &lt;/delete&gt;
 </pre>
-<pre class="code">
+                        <pre class="code">
+    &lt;update id=&quot;logicDelete&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
+        update {{table.tableName}}
+        set flag = 1
+        where id = #{id} and version = #{version}
+    &lt;/delete&gt;
+</pre>
+                        <pre class="code">
     &lt;insert id=&quot;insertSelective&quot; parameterType=&quot;{{generateConfig.pojoPackage}}.{{table.pojoName}}&quot;&gt;
         insert into {{table.tableName}}
         &lt;trim prefix=&quot;(&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
 </pre>
-<pre v-for="(item, index) in table.columns">
+                        <pre v-for="(item, index) in table.columns">
 <pre class="code" v-if="isTimeColumn(item.name)">
             {{item.name}},
 </pre>
@@ -165,11 +173,11 @@ public interface {{table.pojoName}}Mapper {
             &lt;/if&gt;
 </pre>
 </pre>
-<pre  class="code">
+                        <pre  class="code">
         &lt;/trim&gt;
         &lt;trim prefix=&quot;values (&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
 </pre>
-<pre  v-for="(item, index) in table.columns">
+                        <pre  v-for="(item, index) in table.columns">
 <pre class="code" v-if="isTimeColumn(item.name)">
             now(),
 </pre>
@@ -179,16 +187,16 @@ public interface {{table.pojoName}}Mapper {
             &lt;/if&gt;
 </pre>
 </pre>
-<pre  class="code">
+                        <pre  class="code">
         &lt;/trim&gt;
     &lt;/insert&gt;
 </pre>
-<pre class="code">
+                        <pre class="code">
     &lt;update id=&quot;updateByPrimaryKeySelective&quot; parameterType=&quot;{{generateConfig.pojoPackage}}.{{table.pojoName}}&quot;&gt;
         update {{table.tableName}}
         &lt;set&gt;
 </pre>
-<pre v-for="(item, index) in table.columns">
+                        <pre v-for="(item, index) in table.columns">
 <pre class="code" v-if="item.name=='create_time'"></pre>
 <pre class="code" v-else-if="item.name=='create_by'"></pre>
 <pre class="code" v-else-if="item.name == 'update_time'">
@@ -202,12 +210,12 @@ public interface {{table.pojoName}}Mapper {
                 {{item.name}} = #{ {{item.camel}} },
             &lt;/if&gt;
 </pre></pre>
-<pre class="code">
+                        <pre class="code">
         &lt;/set&gt;
         where id = #{id} and version=#{version}
     &lt;/update&gt;
 </pre>
-<pre class="code">
+                        <pre class="code">
 &lt;/mapper>
 </pre>
                     </div>
@@ -229,9 +237,9 @@ public interface {{table.pojoName}}Mapper {
                     pojoPackage: 'com.ken.mall.pojo',
                     daoPackage: 'com.ken.mall.dao',
                     JavaType: {
-                        'INT': 'Integer',
-                        'VARCHAR': 'String',
-                        'DATETIME': 'Date'
+                        'int': 'Integer',
+                        'varchar': 'String',
+                        'datetime': 'Date'
                     },
                 },
                 tableList: [],
@@ -255,7 +263,12 @@ public interface {{table.pojoName}}Mapper {
                 this.tableList = data
             })
             ipcRenderer.on('getTableStructure', (event, data) => {
-                console.log(data);
+                let result = data;
+                result.forEach(bean => {
+                    bean.javaType = this.sqlType2javaType(bean.typeName);
+                    bean.camel = this.columnName2camel(bean.name, this.generateConfig.columnPrefix);
+                })
+                this.table.columns = result;
             })
         },
         methods: {
@@ -329,6 +342,8 @@ public interface {{table.pojoName}}Mapper {
             getAllTables() {
             },
             getColumns(tableName) {
+                this.table.tableName = tableName;
+                this.calulateJavaName();
                 ipcRenderer.send('getTableStructure',tableName);
             }
         }

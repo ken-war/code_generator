@@ -19,7 +19,7 @@ class MySQLlDoc {
             this.tableLists = []
             this.tableCollection = []
             this.tableStructure = []
-
+        }
     }
 
     openConnection() {
@@ -73,15 +73,12 @@ class MySQLlDoc {
                 } else {
                     console.log('result=================================')
                     console.log(result)
-                    console.log('fields=======================================================')
-                    console.log(fields)
+                    console.log('result=================================')
                     this.tableStructure = []
+                    console.log(result.length);
                     result.forEach(item => {
-                        for (var key in item) {
-                            this.tableStructure.push(item[key])
-                        }
+                        this.tableStructure.push(item)
                     })
-                    console.log(this.tableStructure)
                     resolve()
                 }
             })
