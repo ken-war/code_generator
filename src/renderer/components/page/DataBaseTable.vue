@@ -30,7 +30,7 @@
                         <el-input v-model="generateConfig.daoPackage"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="calulateJavaName">更改</el-button>
+                        <el-button @click="updateGenerateConfig">更改</el-button>
                     </el-form-item>
                 </el-form>
                 <el-row type="flex">
@@ -231,17 +231,7 @@ public interface {{table.pojoName}}Mapper {
     export default {
         data() {
             return {
-                generateConfig: {
-                    columnPrefix: 't_',
-                    tablePrefix: 'ax_',
-                    pojoPackage: 'com.ken.mall.pojo',
-                    daoPackage: 'com.ken.mall.dao',
-                    JavaType: {
-                        'int': 'Integer',
-                        'varchar': 'String',
-                        'datetime': 'Date'
-                    },
-                },
+                generateConfig: {},
                 tableList: [],
                 table: {
                     columns: [],
@@ -258,7 +248,7 @@ public interface {{table.pojoName}}Mapper {
             }
         },
         created() {
-            ipcRenderer.send('getTableLists');
+            this.getGenerateConfig();
             ipcRenderer.on('getTableLists', (event, data) => {
                 this.tableList = data
             })
@@ -270,6 +260,7 @@ public interface {{table.pojoName}}Mapper {
                 })
                 this.table.columns = result;
             })
+            this.getAllTables();
         },
         methods: {
             isTimeColumn(name){
@@ -340,12 +331,24 @@ public interface {{table.pojoName}}Mapper {
                 return camel;
             },
             getAllTables() {
+                ipcRenderer.send('getTableLists');
             },
             getColumns(tableName) {
                 this.table.tableName = tableName;
                 this.calulateJavaName();
                 ipcRenderer.send('getTableStructure',tableName);
-            }
+            },
+            getGenerateConfig(){
+                this.generateConfig = this.$db.read().get('generateConfig').value();
+            },
+            updateGenerateConfig(){
+                this.$db.set('generateConfig', this.generateConfig).write();
+                this.$message({
+                    message: "更新成功",
+                    type: "success"
+                });
+                this.calulateJavaName();
+            },
         }
     }
     ;

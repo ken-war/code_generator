@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import VueClipboard from 'vue-clipboard2';
 
 import App from './App'
 import router from './router'
@@ -15,6 +16,7 @@ Vue.prototype.$db = db
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
+Vue.use(VueClipboard);
 
 /* eslint-disable no-new */
 new Vue({

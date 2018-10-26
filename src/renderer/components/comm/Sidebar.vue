@@ -33,11 +33,6 @@
                 items: [
                     {
                         icon: 'el-icon-setting',
-                        index: '/dashboard',
-                        title: '系统首页'
-                    },
-                    {
-                        icon: 'el-icon-setting',
                         index: '/config',
                         title: '配置页'
                     },

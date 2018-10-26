@@ -29,5 +29,18 @@ if (!db.has('mysqlConfig').value()) {
         database: 'roomservice',
     }).write()
 }
+if (!db.has('generateConfig').value()) {
+    db.set('generateConfig', {
+        columnPrefix: 't_',
+        tablePrefix: 't_',
+        pojoPackage: 'com.ken.mall.pojo',
+        daoPackage: 'com.ken.mall.dao',
+        JavaType: {
+            'int': 'Integer',
+            'varchar': 'String',
+            'datetime': 'Date'
+        }
+    }).write()
+}
 
 export default db
