@@ -249,9 +249,6 @@ public interface {{table.pojoName}}Mapper {
         },
         created() {
             this.getGenerateConfig();
-            ipcRenderer.on('getTableLists', (event, data) => {
-                this.tableList = data
-            })
             ipcRenderer.on('getTableStructure', (event, data) => {
                 let result = data;
                 result.forEach(bean => {
@@ -331,12 +328,17 @@ public interface {{table.pojoName}}Mapper {
                 return camel;
             },
             getAllTables() {
-                ipcRenderer.send('getTableLists');
+                this.tableList = ipcRenderer.sendSync('getTableLists');
             },
             getColumns(tableName) {
                 this.table.tableName = tableName;
                 this.calulateJavaName();
-                ipcRenderer.send('getTableStructure',tableName);
+                let result = ipcRenderer.sendSync('getTableStructure',tableName);
+                result.forEach(bean => {
+                    bean.javaType = this.sqlType2javaType(bean.typeName);
+                    bean.camel = this.columnName2camel(bean.name, this.generateConfig.columnPrefix);
+                })
+                this.table.columns = result;
             },
             getGenerateConfig(){
                 this.generateConfig = this.$db.read().get('generateConfig').value();

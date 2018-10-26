@@ -8,7 +8,7 @@ ipcMain.on('getTableLists', (event) => {
     mysqlDoc.openConnection()
         .then(() => {
             mysqlDoc.getTableLists().then(() => {
-                event.sender.send('getTableLists', mysqlDoc.tableLists);
+                event.returnValue = mysqlDoc.tableLists
                 mysqlDoc.closeConnection()
             }).catch(err => {
                 mysqlDoc.closeConnection()
@@ -24,8 +24,7 @@ ipcMain.on('getTableStructure', (event, tableName) => {
     mysqlDoc.openConnection()
         .then(() => {
             mysqlDoc.getTableStructure(tableName).then(() => {
-                console.log(mysqlDoc.tableStructure);
-                event.sender.send('getTableStructure', mysqlDoc.tableStructure);
+                event.returnValue = mysqlDoc.tableStructure
                 mysqlDoc.closeConnection()
             }).catch(err => {
                 mysqlDoc.closeConnection()
