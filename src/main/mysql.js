@@ -38,10 +38,13 @@ class MySQLlDoc {
 
     closeConnection() {
         console.log(` === 数据库 ${this.database} 连接关闭 ===`)
-        this.connection.end(err => {
-            if (err) {
-                throw new Error(err)
-            }
+        return new Promise((resolve, reject) => {
+            this.connection.end(err => {
+                if (err) {
+                    console.log(err)
+                    reject(new Error(err))
+                }
+            })
         })
     }
 

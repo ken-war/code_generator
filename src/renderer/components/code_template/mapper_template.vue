@@ -3,7 +3,7 @@
 <pre class="code">
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
 &lt;!DOCTYPE mapper PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot; &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot; &gt;
-&lt;mapper namespace=&quot;{{generateConfig.daoPackage}}.{{table.pojoName}}Mapper&quot;&gt;
+&lt;mapper namespace=&quot;{{generateConfig.daoPackage}}.{{table.daoName}}&quot;&gt;
     &lt;sql id=&quot;Base_Column_List&quot;&gt;
 </pre>
             <pre class="code" v-for="(item, index) in table.columns">

@@ -3,7 +3,7 @@
 <pre class="code">package {{generateConfig.daoPackage}};
 
 import {{generateConfig.pojoPackage}}.{{table.pojoName}};
-public interface {{table.pojoName}}Mapper {
+public interface {{table.daoName}} {
     int deleteByPrimaryKey(@Param("id") Integer id,@Param("version") Integer version);
     int logicDelete(@Param("id") Integer id,@Param("version") Integer version);
     int insertSelective({{table.pojoName}} {{table.pojoCamelName}});

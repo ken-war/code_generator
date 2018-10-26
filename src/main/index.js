@@ -8,15 +8,28 @@ ipcMain.on('getTableLists', (event) => {
     mysqlDoc.openConnection()
         .then(() => {
             mysqlDoc.getTableLists().then(() => {
-                event.returnValue = mysqlDoc.tableLists
-                mysqlDoc.closeConnection()
+                event.returnValue = {
+                    data: mysqlDoc.tableLists,
+                    status: 0,
+                    msg: '数据库表获取成功'
+                }
             }).catch(err => {
-                mysqlDoc.closeConnection()
-                throw new Error(err)
+                event.returnValue = {
+                    data: '',
+                    status: 1,
+                    msg: '数据库表获取失败：' + err
+                }
             })
         }).catch(err => {
-        mysqlDoc.closeConnection()
-        throw new Error(err)
+        console.log('连接数据库时出错：'+ err)
+        event.returnValue = {
+            status: 1,
+            msg: '连接数据库时出错：' + err
+        }
+    }).finally(() => {
+        mysqlDoc.closeConnection().catch(err => {
+            console.log('关闭连接时出错'+ err)
+        })
     })
 })
 ipcMain.on('getTableStructure', (event, tableName) => {
@@ -24,15 +37,28 @@ ipcMain.on('getTableStructure', (event, tableName) => {
     mysqlDoc.openConnection()
         .then(() => {
             mysqlDoc.getTableStructure(tableName).then(() => {
-                event.returnValue = mysqlDoc.tableStructure
-                mysqlDoc.closeConnection()
+                event.returnValue = {
+                    data: mysqlDoc.tableStructure,
+                    status: 0,
+                    msg: '数据库表结构获取成功'
+                }
             }).catch(err => {
-                mysqlDoc.closeConnection()
-                throw new Error(err)
+                event.returnValue = {
+                    data: mysqlDoc.tableStructure,
+                    status: 1,
+                    msg: '数据库表结构获取失败：'+err
+                }
             })
         }).catch(err => {
-        mysqlDoc.closeConnection()
-        throw new Error(err)
+        event.returnValue = {
+            data: mysqlDoc.tableStructure,
+            status: 1,
+            msg: '连接数据库时出错：'+err
+        }
+    }).finally(() =>{
+        mysqlDoc.closeConnection().catch(err => {
+            console.log('关闭连接时出错'+ err)
+        })
     })
 })
 

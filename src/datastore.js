@@ -35,6 +35,8 @@ if (!db.has('generateConfig').value()) {
         tablePrefix: 't_',
         pojoPackage: 'com.ken.mall.pojo',
         daoPackage: 'com.ken.mall.dao',
+        daoSuffix: 'Mapper',
+        mapperSuffix: 'Mapper',
         JavaType: {
             'int': 'Integer',
             'varchar': 'String',

@@ -29,6 +29,14 @@
                             label="dao包">
                         <el-input v-model="generateConfig.daoPackage"></el-input>
                     </el-form-item>
+                    <el-form-item
+                            label="dao后缀">
+                        <el-input v-model="generateConfig.daoSuffix"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            label="mapper后缀">
+                        <el-input v-model="generateConfig.mapperSuffix"></el-input>
+                    </el-form-item>
                     <el-form-item>
                         <el-button @click="updateGenerateConfig">更改</el-button>
                     </el-form-item>
@@ -75,6 +83,16 @@
                 <mapper-template :generate-config="generateConfig" :table="table"></mapper-template>
             </el-main>
         </el-container>
+        <el-dialog
+                title="提示"
+                :visible.sync="dialogVisible"
+                width="30%"
+                :before-close="handleClose">
+            <span>{{errmsg}}</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="dialogVisible = false">关 闭</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -95,6 +113,7 @@
         },
         data() {
             return {
+                errmsg:'',
                 generateConfig: {},
                 tableList: [],
                 table: {
@@ -108,19 +127,12 @@
                 apiUrl: {
                     getAllTablesUrl: process.env.API_HOST + 'generator/get_all_tables',
                     getAllColumnsUrl: process.env.API_HOST + 'generator/get_all_columns',
-                }
+                },
+                dialogVisible: false
             }
         },
         created() {
             this.getGenerateConfig();
-            ipcRenderer.on('getTableStructure', (event, data) => {
-                let result = data;
-                result.forEach(bean => {
-                    bean.javaType = this.sqlType2javaType(bean.typeName);
-                    bean.camel = this.columnName2camel(bean.name, this.generateConfig.columnPrefix);
-                })
-                this.table.columns = result;
-            })
             this.getAllTables();
         },
         methods: {
@@ -129,8 +141,8 @@
                 this.table.pojoCamelName = this.columnName2camel(this.table.tableName, this.generateConfig.tablePrefix);
                 name = name.substring(0, 1).toUpperCase() + name.substr(1);
                 this.table.pojoName = name;
-                this.table.daoName = name + 'Mapper';
-                this.table.mapperName = name + 'Mapper';
+                this.table.daoName = name + this.generateConfig.daoSuffix;
+                this.table.mapperName = name + this.generateConfig.mapperSuffix;
             },
             sqlType2javaType(sqlType) {
                 return this.generateConfig.JavaType[sqlType];
@@ -147,17 +159,30 @@
                 return camel;
             },
             getAllTables() {
-                this.tableList = ipcRenderer.sendSync('getTableLists');
+                let res = ipcRenderer.sendSync('getTableLists');
+                console.log(res);
+                if(res.status===0){
+                    this.tableList = res.data;
+                }else{
+                    this.errmsg = res.msg;
+                    this.dialogVisible = true
+                }
             },
             getColumns(tableName) {
                 this.table.tableName = tableName;
                 this.calulateJavaName();
-                let result = ipcRenderer.sendSync('getTableStructure',tableName);
-                result.forEach(bean => {
-                    bean.javaType = this.sqlType2javaType(bean.typeName);
-                    bean.camel = this.columnName2camel(bean.name, this.generateConfig.columnPrefix);
-                })
-                this.table.columns = result;
+                let res = ipcRenderer.sendSync('getTableStructure',tableName);
+                if(res.status ===0){
+                    let result = res.data;
+                    result.forEach(bean => {
+                        bean.javaType = this.sqlType2javaType(bean.typeName);
+                        bean.camel = this.columnName2camel(bean.name, this.generateConfig.columnPrefix);
+                    })
+                    this.table.columns = result;
+                }else {
+                    this.errmsg = res.msg;
+                    this.dialogVisible = true
+                }
             },
             getGenerateConfig(){
                 this.generateConfig = this.$db.read().get('generateConfig').value();
@@ -170,6 +195,13 @@
                 });
                 this.calulateJavaName();
             },
+            handleClose(done) {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        done();
+                    })
+                    .catch(_ => {});
+            }
         }
     }
     ;
