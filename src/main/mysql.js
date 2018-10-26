@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /**
  *
  * @type {MySQLlDoc}
@@ -13,12 +13,13 @@ class MySQLlDoc {
         if (!config) {
             throw new Error(`缺少数据库配置参数`)
         } else {
-            this.dbConfig = config.mysql
+            this.dbConfig = config
             this.database = this.dbConfig.database
             this.connection = mysql.createConnection(this.dbConfig)
             this.tableLists = []
-            this.tableCollection = {}
-        }
+            this.tableCollection = []
+            this.tableStructure = []
+
     }
 
     openConnection() {
@@ -62,26 +63,25 @@ class MySQLlDoc {
         })
     }
 
-    getTableStructure() {
+    getTableStructure(tableName) {
+        console.log('getTableStructure start')
         return new Promise((resolve, reject) => {
-            async.map(this.tableLists, (table, callback) => {
-                this.connection.query(queryModel.tableStructureQuery, [this.database, table], (err, result, fields) => {
-                    if (err) {
-                        console.log(`获取表结构时发生错误`)
-                        throw new Error(err)
-                    } else {
-                        this.tableCollection[table] = {}
-                        this.tableCollection[table]['table'] = this.dataClean(result)
-                        this.getIndexStructure(table, () => {
-                            callback()
-                        })
-                    }
-                })
-            }, (err, result) => {
+            this.connection.query(queryModel.tableStructureQuery, [this.database, tableName], (err, result, fields) => {
                 if (err) {
                     console.log(`获取表结构时发生错误`)
                     reject(new Error(err))
                 } else {
+                    console.log('result=================================')
+                    console.log(result)
+                    console.log('fields=======================================================')
+                    console.log(fields)
+                    this.tableStructure = []
+                    result.forEach(item => {
+                        for (var key in item) {
+                            this.tableStructure.push(item[key])
+                        }
+                    })
+                    console.log(this.tableStructure)
                     resolve()
                 }
             })
@@ -90,4 +90,4 @@ class MySQLlDoc {
 
 }
 
-export default MySQLlDoc;
+export default MySQLlDoc

@@ -20,7 +20,7 @@ module.exports = {
     COLUMN_COMMENT AS ${option.COLUMNS.COLUMN_COMMENT}, 
     CHARACTER_SET_NAME AS ${option.COLUMNS.CHARACTER_SET_NAME} 
   FROM 
-    information_schema. COLUMNS 
+    information_schema.COLUMNS 
   WHERE 
     TABLE_SCHEMA = ? 
   AND TABLE_NAME = ?`,

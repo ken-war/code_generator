@@ -1,14 +1,31 @@
 const {app, BrowserWindow} = require('electron')
 const {ipcMain} = require('electron')
 import MySQLlDoc from './mysql'
+import db from '../datastore'
 
-ipcMain.on('getTableLists', (event, arg) => {
-    console.log(arg) // prints "ping"
-    let mysqlDoc = new MySQLlDoc(arg)
+ipcMain.on('getTableLists', (event) => {
+    let mysqlDoc = new MySQLlDoc(db.read().get('mysqlConfig').value())
     mysqlDoc.openConnection()
         .then(() => {
             mysqlDoc.getTableLists().then(() => {
                 event.sender.send('getTableLists', mysqlDoc.tableLists);
+                mysqlDoc.closeConnection()
+            }).catch(err => {
+                mysqlDoc.closeConnection()
+                throw new Error(err)
+            })
+        }).catch(err => {
+        mysqlDoc.closeConnection()
+        throw new Error(err)
+    })
+})
+ipcMain.on('getTableStructure', (event, tableName) => {
+    let mysqlDoc = new MySQLlDoc(db.read().get('mysqlConfig').value())
+    mysqlDoc.openConnection()
+        .then(() => {
+            mysqlDoc.getTableStructure(tableName).then(() => {
+                console.log(mysqlDoc.tableStructure);
+                event.sender.send('getTableStructure', mysqlDoc.tableStructure);
                 mysqlDoc.closeConnection()
             }).catch(err => {
                 mysqlDoc.closeConnection()

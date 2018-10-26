@@ -76,6 +76,7 @@
                     <div @click="copy('pojoContent')" id="pojoContent" class="codeContent">
 <pre class="code">
 package {{generateConfig.pojoPackage}};
+
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Date;
@@ -102,13 +103,13 @@ public class {{table.pojoName}} {
                         content="点击复制">
                         <div slot="reference" @click="copy('daoContent')" id="daoContent" class="codeContent">
 <pre class="code">package {{generateConfig.daoPackage}};
+
 import {{generateConfig.pojoPackage}}.{{table.pojoName}};
 public interface {{table.pojoName}}Mapper {
     int deleteByPrimaryKey(Integer id, Integer version);
     int insertSelective({{table.pojoName}} {{table.pojoCamelName}});
     {{table.pojoName}} selectByPrimaryKey(Integer id);
     int updateByPrimaryKeySelective({{table.pojoName}} {{table.pojoCamelName}});
-    int updateByPrimaryKey({{table.pojoName}} {{table.pojoCamelName}});
 }
 </pre>
                         </div>
@@ -125,7 +126,12 @@ public interface {{table.pojoName}}Mapper {
     &lt;sql id=&quot;Base_Column_List&quot;&gt;
 </pre>
 <pre class="code" v-for="(item, index) in table.columns">
-        {{item.name}} {{item.camel}}
+<pre v-if="index < table.columns.length-1">
+    {{item.name}} {{item.camel}},
+</pre>
+<pre v-if="index === table.columns.length-1">
+    {{item.name}} {{item.camel}}
+</pre>
 </pre>
 <pre class="code">
     &lt;/sql&gt;
@@ -151,7 +157,7 @@ public interface {{table.pojoName}}Mapper {
 </pre>
 <pre v-for="(item, index) in table.columns">
 <pre class="code" v-if="isTimeColumn(item.name)">
-            {{item.name}}
+            {{item.name}},
 </pre>
 <pre class="code" v-else>
              &lt;if test=&quot;{{item.camel}} != null&quot;&gt;
@@ -170,10 +176,10 @@ public interface {{table.pojoName}}Mapper {
 <pre class="code" v-else>
             &lt;if test=&quot;{{item.camel}} != null&quot;&gt;
             #{ {{item.camel}} },
+            &lt;/if&gt;
 </pre>
 </pre>
 <pre  class="code">
-            &lt;/if&gt;
         &lt;/trim&gt;
     &lt;/insert&gt;
 </pre>
@@ -202,7 +208,7 @@ public interface {{table.pojoName}}Mapper {
     &lt;/update&gt;
 </pre>
 <pre class="code">
-
+&lt;/mapper>
 </pre>
                     </div>
                 </div>
@@ -212,12 +218,14 @@ public interface {{table.pojoName}}Mapper {
 </template>
 
 <script type="text/ecmascript-6">
+    const {ipcRenderer} = require('electron')
+
     export default {
         data() {
             return {
                 generateConfig: {
                     columnPrefix: 't_',
-                    tablePrefix: 't_',
+                    tablePrefix: 'ax_',
                     pojoPackage: 'com.ken.mall.pojo',
                     daoPackage: 'com.ken.mall.dao',
                     JavaType: {
@@ -242,7 +250,13 @@ public interface {{table.pojoName}}Mapper {
             }
         },
         created() {
-            this.getAllTables();
+            ipcRenderer.send('getTableLists');
+            ipcRenderer.on('getTableLists', (event, data) => {
+                this.tableList = data
+            })
+            ipcRenderer.on('getTableStructure', (event, data) => {
+                console.log(data);
+            })
         },
         methods: {
             isTimeColumn(name){
@@ -253,10 +267,18 @@ public interface {{table.pojoName}}Mapper {
                 let textContent = '';
                 textContent = this.getInnerText(document.getElementById(id), 'code');
                 console.log(textContent);
-                this.$message({
-                    message: "已复制到剪切板",
-                    type: "success"
-                });
+
+                this.$copyText(textContent).then((e) =>{
+                    this.$message({
+                        message: "已复制到剪切板",
+                        type: "success"
+                    });
+                }, (e)=> {
+                    this.$message({
+                        message: "Can not copy",
+                        type: "error"
+                    });
+                })
                 return;
             },
             getInnerText(dom,className) {
@@ -287,7 +309,7 @@ public interface {{table.pojoName}}Mapper {
                 this.table.pojoCamelName = this.columnName2camel(this.table.tableName, this.generateConfig.tablePrefix);
                 name = name.substring(0, 1).toUpperCase() + name.substr(1);
                 this.table.pojoName = name;
-                this.table.daoName = name + 'Dao';
+                this.table.daoName = name + 'Mapper';
                 this.table.mapperName = name + 'Mapper';
             },
             sqlType2javaType(sqlType) {
@@ -305,82 +327,23 @@ public interface {{table.pojoName}}Mapper {
                 return camel;
             },
             getAllTables() {
-                this.$axios.get(this.apiUrl.getAllTablesUrl, {
-                    params: {}
-                })
-                    .then((response) => {
-                        let res = response.data;
-                        let status = res.status;
-                        if (status === 0) {
-                            this.tableList = res.data;
-                        } else {
-                            this.$message({
-                                message: res.msg,
-                                type: "error"
-                            });
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        this.$message({
-                            message: "系统错误，请联系管理员",
-                            type: "error"
-                        });
-                    });
             },
             getColumns(tableName) {
-                this.$axios.get(this.apiUrl.getAllColumnsUrl, {
-                    params: {
-                        tableName: tableName
-                    }
-                })
-                    .then((response) => {
-                        let res = response.data;
-                        this.table.tableName = tableName;
-                        this.calulateJavaName();
-                        let status = res.status;
-                        if (status === 0) {
-                            let result = res.data;
-                            result.forEach(bean => {
-                                bean.javaType = this.sqlType2javaType(bean.typeName);
-                                bean.camel = this.columnName2camel(bean.name, this.generateConfig.columnPrefix);
-                            })
-                            console.log(result);
-                            this.table.columns = result;
-                        } else {
-                            this.$message({
-                                message: res.msg,
-                                type: "error"
-                            });
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        this.$message({
-                            message: "系统错误，请联系管理员",
-                            type: "error"
-                        });
-                    });
+                ipcRenderer.send('getTableStructure',tableName);
             }
         }
     }
     ;
 </script>
 
-<style>
-.codeContent
-{
-    background-color : #fff;
-    padding : 20px;
-}
-
-.code{
-    font-size : 18px;
-}
-#daoContent,#pojoContent,#mapperContent::hover{
-    background:#3390ff;
-    color:#fff;
-}
-
+<style lang="stylus" scoped rel="stylesheet/stylus">
+    .codeContent
+        background-color : #fff;
+        padding : 20px;
+        .code
+            font-size : 18px;
+    #daoContent,#pojoContent,#mapperContent
+        &:hover
+            background:#3390ff;
+            color:#fff;
 </style>
-<style lang="stylus"></style>
