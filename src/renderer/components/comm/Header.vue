@@ -4,7 +4,7 @@
         <div class="collapse-btn" @click="collapseChage">
             <i class="el-icon-menu"></i>
         </div>
-        <div class="logo">后台管理系统</div>
+        <div class="logo">代码生成器</div>
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 全屏显示 -->
@@ -12,15 +12,6 @@
                     <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom">
                         <i class="el-icon-rank"></i>
                     </el-tooltip>
-                </div>
-                <!-- 消息中心 -->
-                <div class="btn-bell">
-                    <el-tooltip effect="dark" :content="message?`有${message}条未读消息`:`消息中心`" placement="bottom">
-                        <router-link to="/tabs">
-                            <i class="el-icon-bell"></i>
-                        </router-link>
-                    </el-tooltip>
-                    <span class="btn-bell-badge" v-if="message"></span>
                 </div>
                 <!-- 用户头像 -->
                 <div class="user-avator"><img src="static/img/img.jpg"></div>
@@ -30,62 +21,25 @@
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <a href="http://blog.gdfengshuo.com/about/" target="_blank">
-                            <el-dropdown-item>关于作者</el-dropdown-item>
-                        </a>
-                        <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
+                        <a href="https://github.com/ken-war/code_generator" target="_blank">
                             <el-dropdown-item>项目仓库</el-dropdown-item>
                         </a>
-                        <el-button type="text" @click="dialogFormVisible = true" style="padding-left: 14px">修改密码</el-button>
-                        <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>
         </div>
-        <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">
-            <el-form :model="apiDto" :rules="rules" ref="checkPasswordId">
-                <el-form-item label="请输入旧密码" :label-width="formLabelWidth" prop="oldPassword">
-                    <el-input v-model="apiDto.oldPassword"></el-input>
-                </el-form-item>
-                <el-form-item label="请输入新密码" :label-width="formLabelWidth" prop="newPassword">
-                    <el-input v-model="apiDto.newPassword"></el-input>
-                </el-form-item>
-                <el-form-item label="请确认新密码" :label-width="formLabelWidth"  prop="checkPass">
-                    <el-input v-model="apiDto.affirmNewPassword" auto-complete="off"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="">确 定</el-button>
-            </div>
-        </el-dialog>
     </div>
 </template>
 <script>
     import bus from './bus';
     export default {
         data() {
-            var checkOldPassword = (rule, value, callback) => {
-                if(!value) {
-                    return callback(new Error('旧密码不能为空'));
-                } else {
-                    callback();
-                }
-            };
-            var validatePass = (rule, value, callback) => {
-                let regex = /^(?=.*?[A-Za-z]+)(?=.*?[0-9]+)(?=.*?[A-Z]+)(?=.*?[a-z]+)(?=.*?[a-zA-Z0-9]{6,15}).*$/;
-                if (!regex.test(value)) {
-                    callback(new Error('新密码必须包含大小写字母、数字，6-15位内'));
-                } else {
-                    callback();
-                }
-            };
             return {
                 apiUrl: {
                 },
                 collapse: false,
                 fullscreen: false,
-                name: 'linxin',
+                name: 'ken_war',
                 message: 2,
                 dialogFormVisible: false,
                 apiDto: {
@@ -95,17 +49,6 @@
                     version: ''
                 },
                 formLabelWidth: '110px',
-                rules: {
-                    oldPassword: [
-                        {  required: true,validator: checkOldPassword, trigger: 'blur' },
-                    ],
-                    newPassword: [
-                        {  required: true, validator: validatePass, trigger: 'blur' },
-                    ],
-                    checkPass: [
-                        { required: true, message: '请输入确认密码', trigger: 'blur' },
-                    ],
-                }
             }
         },
         created() {

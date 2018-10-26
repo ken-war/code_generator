@@ -24,8 +24,7 @@
                         <el-input v-model="dbConfig.database"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="testConnectDb">测试连接</el-button>
-                        <el-button @click="updateDbConfig">更新配置</el-button>
+                        <el-button @click="updateDbConfig">更新数据库配置</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>

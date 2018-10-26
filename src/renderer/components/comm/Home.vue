@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <el-container style="height: 100%">
-            <el-header height="auto">
+            <el-header style="padding: 0;" height="auto">
                 <v-head></v-head>
             </el-header>
             <el-container style="height: 100%">
@@ -11,7 +11,7 @@
                     </div>
                 </el-aside>
                 <el-container>
-                    <el-header height="auto">
+                    <el-header style="padding: 0;" height="auto">
                         <v-tags></v-tags>
                     </el-header>
                     <el-main class="content-box">
@@ -71,8 +71,3 @@
         methods: {}
     }
 </script>
-<style>
-    .el-header {
-        padding: 0
-    }
-</style>

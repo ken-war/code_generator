@@ -21,12 +21,12 @@ db._.mixin(LodashId)
 
 if (!db.has('mysqlConfig').value()) {
     db.set('mysqlConfig', {
-        host: '118.25.40.157',
+        host: '127.0.0.1',
         port: '3306',
-        user: 'ceshi',
-        password: 'ken@ceshimysql',
+        user: 'root',
+        password: '',
         // 数据库名字
-        database: 'roomservice',
+        database: 'tset',
     }).write()
 }
 if (!db.has('generateConfig').value()) {
