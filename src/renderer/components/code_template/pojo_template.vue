@@ -12,6 +12,7 @@ import java.util.Date;
 public class {{table.pojoName}} {
 </pre>
             <pre class="code" v-for="(item, index) in table.columns">
+    /**{{item.remark}}*/
     private {{item.javaType}} {{item.camel}};
 </pre>
             <pre class="code">
