@@ -36,7 +36,7 @@
         update {{table.tableName}}
         set flag = 1
         where id = #{id} and version = #{version}
-    &lt;/delete&gt;
+    &lt;/update&gt;
 </pre>
             <pre class="code">
     &lt;insert id=&quot;insertSelective&quot; parameterType=&quot;{{generateConfig.pojoPackage}}.{{table.pojoName}}&quot;&gt;
