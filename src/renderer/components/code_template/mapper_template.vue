@@ -34,7 +34,7 @@
             <pre class="code">
     &lt;update id=&quot;logicDelete&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
         update {{table.tableName}}
-        set flag = 1
+        set flag = 0
         where id = #{id} and version = #{version}
     &lt;/update&gt;
 </pre>
