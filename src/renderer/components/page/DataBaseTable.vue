@@ -145,7 +145,13 @@
                 this.table.mapperName = name + this.generateConfig.mapperSuffix;
             },
             sqlType2javaType(sqlType) {
-                return this.generateConfig.JavaType[sqlType];
+                let javatype ='';
+                this.generateConfig.JavaType.forEach(bean=>{
+                   if(bean.mysqlType == sqlType){
+                       javatype = bean.javaType;
+                   }
+                });
+                return javatype;
             },
             columnName2camel(name, prefix) {
                 if (prefix != undefined) {
@@ -172,13 +178,17 @@
                 this.table.tableName = tableName;
                 this.calulateJavaName();
                 let res = ipcRenderer.sendSync('getTableStructure',tableName);
+                console.log(this.generateConfig);
                 if(res.status ===0){
                     let result = res.data;
+                    console.log(result);
                     result.forEach(bean => {
                         bean.javaType = this.sqlType2javaType(bean.typeName);
+                        console.log(this.sqlType2javaType(bean.typeName));
                         bean.camel = this.columnName2camel(bean.name, this.generateConfig.columnPrefix);
-                    })
+                    });
                     this.table.columns = result;
+                    console.log(this.table.columns);
                 }else {
                     this.errmsg = res.msg;
                     this.dialogVisible = true
@@ -188,7 +198,9 @@
                 this.generateConfig = this.$db.read().get('generateConfig').value();
             },
             updateGenerateConfig(){
+                console.log(this.$db.get('generateConfig'));
                 this.$db.set('generateConfig', this.generateConfig).write();
+                console.log(this.$db.get('generateConfig'));
                 this.$message({
                     message: "更新成功",
                     type: "success"
@@ -202,6 +214,9 @@
                     })
                     .catch(_ => {});
             }
+        },
+        computed: {
+
         }
     }
     ;

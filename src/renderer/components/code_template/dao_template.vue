@@ -3,11 +3,17 @@
 <pre class="code">package {{generateConfig.daoPackage}};
 
 import {{generateConfig.pojoPackage}}.{{table.pojoName}};
+import org.apache.ibatis.annotations.Param;
+
 public interface {{table.daoName}} {
     int deleteByPrimaryKey(@Param("id") Integer id,@Param("version") Integer version);
+
     int logicDelete(@Param("id") Integer id,@Param("version") Integer version);
+
     int insertSelective({{table.pojoName}} {{table.pojoCamelName}});
+
     {{table.pojoName}} selectByPrimaryKey(Integer id);
+
     int updateByPrimaryKeySelective({{table.pojoName}} {{table.pojoCamelName}});
 }
 </pre>

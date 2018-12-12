@@ -30,6 +30,7 @@ if (!db.has('mysqlConfig').value()) {
     }).write()
 }
 if (!db.has('generateConfig').value()) {
+    // 此处为初始化数据，需要在前端提供相应的配置
     db.set('generateConfig', {
         columnPrefix: 't_',
         tablePrefix: 't_',
@@ -37,11 +38,28 @@ if (!db.has('generateConfig').value()) {
         daoPackage: 'com.ken.mall.dao',
         daoSuffix: 'Mapper',
         mapperSuffix: 'Mapper',
-        JavaType: {
-            'int': 'Integer',
-            'varchar': 'String',
-            'datetime': 'Date'
-        }
+        JavaType: [
+            {
+                mysqlType: 'int',
+                javaType: 'Integer'
+            },
+            {
+                mysqlType: 'varchar',
+                javaType: 'String'
+            },
+            {
+                mysqlType: 'datetime',
+                javaType: 'Date'
+            },
+            {
+                mysqlType: 'bigint',
+                javaType: 'Long'
+            },
+            {
+                mysqlType: 'decimal',
+                javaType: 'BigDecimal'
+            }
+        ]
     }).write()
 }
 

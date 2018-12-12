@@ -23,6 +23,13 @@
                         label="数据库名">
                         <el-input v-model="dbConfig.database"></el-input>
                     </el-form-item>
+                    <el-button @click="addType">增加字段类型映射</el-button>
+                    <el-form-item :inline = true v-for="(item,index) in mysqlType2JavaType" :key="index"
+                                  label="类型映射">
+                        <el-col :span="9"><el-input v-model="item.mysqlType"></el-input></el-col>
+                        <el-col :span="9"><el-input  v-model="item.javaType"></el-input></el-col>
+                        <el-col :span="2"><el-button @click="removeType(index)">删除</el-button></el-col>
+                    </el-form-item>
                     <el-form-item>
                         <el-button @click="updateDbConfig">更新数据库配置</el-button>
                     </el-form-item>
@@ -37,7 +44,21 @@
     export default {
         data() {
             return {
-                dbConfig: {}
+                dbConfig: {},
+                mysqlType2JavaType:[
+                    {
+                        mysqlType: 'int',
+                        javaType: 'Integer'
+                    },
+                    {
+                        mysqlType: 'varchar',
+                        javaType: 'String'
+                    },
+                    {
+                        mysqlType: 'datetime',
+                        javaType: 'Date'
+                    }
+                ]
             }
         },
         created() {
@@ -45,15 +66,28 @@
             this.getDbConfig();
         },
         methods: {
+            addType(){
+                this.mysqlType2JavaType.push({
+                    mysqlType: '',
+                    javaType: ''
+                });
+                console.log(this.mysqlType2JavaType.length);
+            },
+            removeType(index){
+                console.log(index);
+                this.mysqlType2JavaType.splice(index,1);
+            },
             getDbConfig() {
                 this.dbConfig = this.$db.read().get('mysqlConfig').value();
             },
             updateDbConfig() {
+                this.$db.set('generateConfig.JavaType',this.mysqlType2JavaType).write();
                 this.$db.set('mysqlConfig', this.dbConfig).write();
                 this.$message({
                     message: "更新成功",
                     type: "success"
                 });
+                console.log(this.generateConfig = this.$db.read().get('generateConfig').value());
             },
             testConnectDb() {},
 
