@@ -1,13 +1,20 @@
 <template>
-    <temolate-content template-name="pojo">
+    <temolate-content template-name="pojo" :file-name="table.pojoName">
 <pre class="code">
-package {{generateConfig.pojoPackage}};
+package {{generateConfig.javaPackage}}.pojo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import java.util.Date;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Slf4j
 public class {{table.pojoName}} {
 </pre>

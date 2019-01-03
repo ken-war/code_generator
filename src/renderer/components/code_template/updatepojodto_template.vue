@@ -1,20 +1,28 @@
 <template>
-    <temolate-content template-name="dao" :file-name="table.daoName">
-<pre class="code">package {{generateConfig.javaPackage}}.dao;
+    <temolate-content template-name="addpojodto" :file-name="table.updatePojoDtoName">
+<pre class="code">
+package {{generateConfig.javaPackage}}.dto;
 
-import {{generateConfig.javaPackage}}.pojo.{{table.pojoName}};
-import org.apache.ibatis.annotations.Param;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-public interface {{table.daoName}} {
-    int deleteByPrimaryKey(@Param("id") Integer id,@Param("version") Integer version);
+import java.util.Date;
 
-    int logicDelete(@Param("id") Integer id,@Param("version") Integer version);
-
-    int insertSelective({{table.pojoName}} {{table.pojoCamelName}});
-
-    {{table.pojoName}} selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective({{table.pojoName}} {{table.pojoCamelName}});
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Slf4j
+public class {{table.updatePojoDtoName}} {
+</pre>
+            <pre class="code" v-for="(item, index) in table.columns">
+    /**{{item.remark}}*/
+    private {{item.javaType}} {{item.camel}};
+</pre>
+            <pre class="code">
 }
 </pre>
     </temolate-content>

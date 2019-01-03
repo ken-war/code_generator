@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p>{{templateName}}：</p>
+        <p>{{templateName}}：{{fileName}}</p>
         <el-button @click="copy('content')">复制</el-button>
         <div @click="copy('content')" class="codeContent" ref="content">
             <slot></slot>
@@ -12,7 +12,8 @@
 export default {
     name: "template_content",
     props: {
-        templateName: String
+        templateName: String,
+        fileName: String
     },
     methods: {
         copy(id){

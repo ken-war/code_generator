@@ -22,12 +22,8 @@
                         <el-input v-model="generateConfig.tablePrefix"></el-input>
                     </el-form-item>
                     <el-form-item
-                            label="pojo包">
-                        <el-input v-model="generateConfig.pojoPackage"></el-input>
-                    </el-form-item>
-                    <el-form-item
-                            label="dao包">
-                        <el-input v-model="generateConfig.daoPackage"></el-input>
+                            label="包名">
+                        <el-input v-model="generateConfig.javaPackage"></el-input>
                     </el-form-item>
                     <el-form-item
                             label="dao后缀">
@@ -36,6 +32,26 @@
                     <el-form-item
                             label="mapper后缀">
                         <el-input v-model="generateConfig.mapperSuffix"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            label="Service名称">
+                        <el-input v-model="generateConfig.serviceName"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            label="添加方法">
+                        <el-input v-model="generateConfig.addMethod"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            label="删除方法">
+                        <el-input v-model="generateConfig.deleteMethod"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            label="修改方法">
+                        <el-input v-model="generateConfig.updateMethod"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            label="查询方法">
+                        <el-input v-model="generateConfig.selectMethod"></el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button @click="updateGenerateConfig">更改</el-button>
@@ -79,8 +95,13 @@
                     </el-table-column>
                 </el-table>
                 <pojo-template :generate-config="generateConfig" :table="table"></pojo-template>
+                <addpojodto-template :generate-config="generateConfig" :table="table"></addpojodto-template>
+                <updatepojodto-template :generate-config="generateConfig" :table="table"></updatepojodto-template>
                 <dao-template :generate-config="generateConfig" :table="table"></dao-template>
                 <mapper-template :generate-config="generateConfig" :table="table"></mapper-template>
+                <controller-template :generate-config="generateConfig" :table="table"></controller-template>
+                <service-template :generate-config="generateConfig" :table="table"></service-template>
+                <service-impl-template :generate-config="generateConfig" :table="table"></service-impl-template>
             </el-main>
         </el-container>
         <el-dialog
@@ -98,18 +119,26 @@
 
 <script type="text/ecmascript-6">
     import  pojoTemplate from  "../code_template/pojo_template"
+    import  addpojodtoTemplate from  "../code_template/addpojodto_template"
+    import  updatepojodtoTemplate from  "../code_template/updatepojodto_template"
     import  daoTemplate from  "../code_template/dao_template"
     import  mapperTemplate from  "../code_template/mapper_template"
-
-
+    import  controllerTemplate from "../code_template/controller_template"
+    import  serviceTemplate from "../code_template/service_template"
+    import  serviceImplTemplate from "../code_template/serviceImpl_template"
 
     const {ipcRenderer} = require('electron')
 
     export default {
         components:{
             pojoTemplate,
+            addpojodtoTemplate,
+            updatepojodtoTemplate,
             daoTemplate,
-            mapperTemplate
+            mapperTemplate,
+            controllerTemplate,
+            serviceTemplate,
+            serviceImplTemplate
         },
         data() {
             return {
@@ -120,6 +149,8 @@
                     columns: [],
                     tableName: '',
                     pojoName: '',
+                    addPojoDtoName: '',
+                    updatePojoDtoName: '',
                     pojoCamelName:'',
                     daoName: '',
                     mapperName: '',
@@ -141,6 +172,8 @@
                 this.table.pojoCamelName = this.columnName2camel(this.table.tableName, this.generateConfig.tablePrefix);
                 name = name.substring(0, 1).toUpperCase() + name.substr(1);
                 this.table.pojoName = name;
+                this.table.addPojoDtoName = "Add"+name+"Dto";
+                this.table.updatePojoDtoName = "Update"+name+"Dto";
                 this.table.daoName = name + this.generateConfig.daoSuffix;
                 this.table.mapperName = name + this.generateConfig.mapperSuffix;
             },

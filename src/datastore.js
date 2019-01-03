@@ -34,8 +34,7 @@ if (!db.has('generateConfig').value()) {
     db.set('generateConfig', {
         columnPrefix: 't_',
         tablePrefix: 't_',
-        pojoPackage: 'com.ken.mall.pojo',
-        daoPackage: 'com.ken.mall.dao',
+        javaPackage: 'com.ken.mall',
         daoSuffix: 'Mapper',
         mapperSuffix: 'Mapper',
         JavaType: [
@@ -59,7 +58,12 @@ if (!db.has('generateConfig').value()) {
                 mysqlType: 'decimal',
                 javaType: 'BigDecimal'
             }
-        ]
+        ],
+        addMethod: 'add',
+        deleteMethod: 'delete',
+        updateMethod: 'update',
+        selectMethod: 'select',
+        serviceName: 'DemoService'
     }).write()
 }
 
