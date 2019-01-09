@@ -8,6 +8,7 @@ import {{generateConfig.javaPackage}}.dto.{{table.addPojoDtoName}};
 import {{generateConfig.javaPackage}}.dto.{{table.updatePojoDtoName}};
 import {{generateConfig.javaPackage}}.dao.{{table.daoName}};
 import {{generateConfig.javaPackage}}.pojo.{{table.pojoName}};
+import com.ken.base.common.comm.ServerResponse;
 import lombok.extern.slf4j.Slf4j;
 import {{generateConfig.javaPackage}}.service.{{generateConfig.serviceName}};
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +49,10 @@ public class {{generateConfig.serviceName}}Impl implements {{generateConfig.serv
     public ServerResponse {{generateConfig.updateMethod}}(Update{{table.pojoName}}Dto update{{table.pojoName}}Dto){
         String updateBy = RequestHolder.getCurrentCrmUser().getTrueName();
         {{table.pojoName}} {{pojoNameToLower}} = {{table.pojoName}}.builder()
-                .id(update{{table.pojoName}}Dto.getId)
-                .version(update{{table.pojoName}}Dto.getVersion)
+                .id(update{{table.pojoName}}Dto.getId())
+                .version(update{{table.pojoName}}Dto.getVersion())
                 .build();
-        int count = {{daoNameToLower}}.updateByPrimaryKeySelective(update{{table.pojoName}}Dto);
+        int count = {{daoNameToLower}}.updateByPrimaryKeySelective({{pojoNameToLower}});
         if(count >0){
             return ServerResponse.createBySuccess();
         }

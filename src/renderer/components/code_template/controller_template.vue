@@ -70,7 +70,7 @@ public class {{controllerDto.controllerName}} {
     }
 
     @ApiOperation(value="查询")
-    @PostMapping(value="select.do")
+    @GetMapping(value="select.do")
     public ServerResponse select(@NotNull Integer id){
         return {{autowiredServiceToLower}}.{{generateConfig.selectMethod}}(id);
     }

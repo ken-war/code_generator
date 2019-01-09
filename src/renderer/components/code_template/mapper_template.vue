@@ -18,7 +18,7 @@
     &lt;/sql&gt;
 </pre>
             <pre class="code">
-    &lt;select id=&quot;selectByPrimaryKey&quot; resultType=&quot;{{generateConfig.javaPackage}}.{{table.pojoName}}&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
+    &lt;select id=&quot;selectByPrimaryKey&quot; resultType=&quot;{{generateConfig.javaPackage}}.pojo.{{table.pojoName}}&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
         select
         &lt;include refid=&quot;Base_Column_List&quot;/&gt;
         from {{table.tableName}}
@@ -39,7 +39,7 @@
     &lt;/update&gt;
 </pre>
             <pre class="code">
-    &lt;insert id=&quot;insertSelective&quot; parameterType=&quot;{{generateConfig.javaPackage}}.{{table.pojoName}}&quot;&gt;
+    &lt;insert id=&quot;insertSelective&quot; parameterType=&quot;{{generateConfig.javaPackage}}.pojo.{{table.pojoName}}&quot;&gt;
         insert into {{table.tableName}}
         &lt;trim prefix=&quot;(&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
 </pre>
@@ -72,7 +72,7 @@
     &lt;/insert&gt;
 </pre>
             <pre class="code">
-    &lt;update id=&quot;updateByPrimaryKeySelective&quot; parameterType=&quot;{{generateConfig.javaPackage}}.{{table.pojoName}}&quot;&gt;
+    &lt;update id=&quot;updateByPrimaryKeySelective&quot; parameterType=&quot;{{generateConfig.javaPackage}}.pojo.{{table.pojoName}}&quot;&gt;
         update {{table.tableName}}
         &lt;set&gt;
 </pre>
