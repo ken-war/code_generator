@@ -94,14 +94,16 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <pojo-template :generate-config="generateConfig" :table="table"></pojo-template>
-                <addpojodto-template :generate-config="generateConfig" :table="table"></addpojodto-template>
-                <updatepojodto-template :generate-config="generateConfig" :table="table"></updatepojodto-template>
-                <dao-template :generate-config="generateConfig" :table="table"></dao-template>
-                <mapper-template :generate-config="generateConfig" :table="table"></mapper-template>
-                <controller-template :generate-config="generateConfig" :table="table"></controller-template>
-                <service-template :generate-config="generateConfig" :table="table"></service-template>
-                <service-impl-template :generate-config="generateConfig" :table="table"></service-impl-template>
+                <div v-if="hasData">
+                    <pojo-template :generate-config="generateConfig" :table="table"></pojo-template>
+                    <addpojodto-template :generate-config="generateConfig" :table="table"></addpojodto-template>
+                    <updatepojodto-template :generate-config="generateConfig" :table="table"></updatepojodto-template>
+                    <dao-template :generate-config="generateConfig" :table="table"></dao-template>
+                    <mapper-template :generate-config="generateConfig" :table="table"></mapper-template>
+                    <controller-template :generate-config="generateConfig" :table="table"></controller-template>
+                    <service-template :generate-config="generateConfig" :table="table"></service-template>
+                    <service-impl-template :generate-config="generateConfig" :table="table"></service-impl-template>
+                </div>
             </el-main>
         </el-container>
         <el-dialog
@@ -143,6 +145,7 @@
         data() {
             return {
                 errmsg:'',
+                hasData:false,
                 generateConfig: {},
                 tableList: [],
                 table: {
@@ -210,6 +213,7 @@
             getColumns(tableName) {
                 this.table.tableName = tableName;
                 this.calulateJavaName();
+                this.hasData = false;
                 let res = ipcRenderer.sendSync('getTableStructure',tableName);
                 console.log(this.generateConfig);
                 if(res.status ===0){
@@ -221,6 +225,7 @@
                         bean.camel = this.columnName2camel(bean.name, this.generateConfig.columnPrefix);
                     });
                     this.table.columns = result;
+                    this.hasData = true;
                     console.log(this.table.columns);
                 }else {
                     this.errmsg = res.msg;

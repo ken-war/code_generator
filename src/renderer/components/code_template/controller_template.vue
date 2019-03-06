@@ -110,7 +110,8 @@ public class {{controllerDto.controllerName}} {
         },
         computed: {
             autowiredServiceToLower: function() {
-                return this.generateConfig.serviceName.substr(0,1).toString().toLowerCase()+this.generateConfig.serviceName.substr(1,this.generateConfig.serviceName.length);
+                let serviceName = this.generateConfig.serviceName || 'demoService'
+                return serviceName.substr(0,1).toString().toLowerCase()+serviceName.substr(1,serviceName.length);
             }
         }
     }
