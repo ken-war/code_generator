@@ -88,7 +88,8 @@ public class {{generateConfig.serviceName}}Impl implements {{generateConfig.serv
         },
         computed: {
             autowiredServiceToLower: function() {
-                return this.generateConfig.serviceName.substr(0,1).toString().toLowerCase()+this.generateConfig.serviceName.substr(1,this.generateConfig.serviceName.length);
+                let serviceName = this.generateConfig.serviceName || 'demoService'
+                return serviceName.substr(0,1).toString().toLowerCase()+serviceName.substr(1,serviceName.length);
             },
             daoNameToLower: function() {
                 return this.table.daoName.substr(0,1).toString().toLowerCase()+this.table.daoName.substr(1,this.table.daoName.length);

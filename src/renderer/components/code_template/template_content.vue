@@ -2,7 +2,7 @@
     <div>
         <p>{{templateName}}：{{fileName}}</p>
         <el-button @click="copy('content')">复制</el-button>
-        <div @click="copy('content')" class="codeContent" ref="content">
+        <div class="codeContent" ref="content">
             <slot></slot>
         </div>
     </div>
@@ -65,9 +65,6 @@ export default {
     .codeContent
         background-color : #fff;
         padding : 20px;
-        &:hover
-            background:#3390ff;
-            color:#fff;
         .code
             font-size : 18px;
 </style>

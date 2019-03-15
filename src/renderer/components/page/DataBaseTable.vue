@@ -6,9 +6,17 @@
                     <div slot="header" class="clearfix">
                         <span>数据库表</span>
                     </div>
-                    <div v-for="(item, index) in tableList" class="text item">
-                        <el-button style="width: 100%;" @click="getColumns(item)">{{item}}</el-button>
-                    </div>
+                    <el-select v-model="activeTableName" @change="getColumns" filterable placeholder="请选择">
+                        <el-option
+                                v-for="item in tableList"
+                                :key="item"
+                                :label="item"
+                                :value="item">
+                        </el-option>
+                    </el-select>
+                    <!--<div v-for="(item, index) in tableList" class="text item">-->
+                        <!--<el-button style="width: 100%;" @click="getColumns(item)">{{item}}</el-button>-->
+                    <!--</div>-->
                 </el-card>
             </el-aside>
             <el-main>
@@ -63,45 +71,71 @@
                     <el-col>dao名:{{table.daoName}}</el-col>
                     <el-col>mapper名:{{table.mapperName}}</el-col>
                 </el-row>
-                <el-table
-                        :data="table.columns">
-                    <el-table-column
-                            label="字段名"
-                            prop="name">
-                    </el-table-column>
+                <div v-if="hasData">
+                    <el-collapse v-model="activeNames">
+                        <el-collapse-item title="表总览" name="0">
+                            <el-table
+                                    :data="table.columns">
+                                <el-table-column
+                                        label="字段名"
+                                        prop="name">
+                                </el-table-column>
 
-                    <el-table-column
-                            label="字段类型"
-                            prop="typeName">
-                    </el-table-column>
+                                <el-table-column
+                                        label="字段类型"
+                                        prop="typeName">
+                                </el-table-column>
 
-                    <el-table-column
-                            label="备注"
-                            prop="remark">
-                    </el-table-column>
+                                <el-table-column
+                                        label="备注"
+                                        prop="remark">
+                                </el-table-column>
 
-                    <el-table-column
-                            label="字段驼峰">
-                        <template slot-scope="scope">
-                            <span>{{ scope.row.camel }}</span>
-                        </template>
-                    </el-table-column>
+                                <el-table-column
+                                        label="字段驼峰">
+                                    <template slot-scope="scope">
+                                        <span>{{ scope.row.camel }}</span>
+                                    </template>
+                                </el-table-column>
 
-                    <el-table-column
-                            label="JAVA类型">
-                        <template slot-scope="scope">
-                            <span>{{ scope.row.javaType }}</span>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <pojo-template :generate-config="generateConfig" :table="table"></pojo-template>
-                <addpojodto-template :generate-config="generateConfig" :table="table"></addpojodto-template>
-                <updatepojodto-template :generate-config="generateConfig" :table="table"></updatepojodto-template>
-                <dao-template :generate-config="generateConfig" :table="table"></dao-template>
-                <mapper-template :generate-config="generateConfig" :table="table"></mapper-template>
-                <controller-template :generate-config="generateConfig" :table="table"></controller-template>
-                <service-template :generate-config="generateConfig" :table="table"></service-template>
-                <service-impl-template :generate-config="generateConfig" :table="table"></service-impl-template>
+                                <el-table-column
+                                        label="JAVA类型">
+                                    <template slot-scope="scope">
+                                        <span>{{ scope.row.javaType }}</span>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </el-collapse-item>
+                        <el-collapse-item title="pojo模版" name="1">
+                            <pojo-template :generate-config="generateConfig" :table="table"></pojo-template>
+                        </el-collapse-item>
+                        <el-collapse-item title="add pojo dto" name="2">
+                            <addpojodto-template :generate-config="generateConfig" :table="table"></addpojodto-template>
+
+                        </el-collapse-item>
+                        <el-collapse-item title="update pojo dto" name="3">
+                            <updatepojodto-template :generate-config="generateConfig" :table="table"></updatepojodto-template>
+
+                        </el-collapse-item>
+                        <el-collapse-item title="dao" name="4">
+                            <dao-template :generate-config="generateConfig" :table="table"></dao-template>
+
+                        </el-collapse-item>
+                        <el-collapse-item title="mapper xml" name="5">
+                            <mapper-template :generate-config="generateConfig" :table="table"></mapper-template>
+
+                        </el-collapse-item>
+                        <el-collapse-item title="controller" name="6">
+                            <controller-template :generate-config="generateConfig" :table="table"></controller-template>
+                        </el-collapse-item>
+                        <el-collapse-item title="service" name="7">
+                            <service-template :generate-config="generateConfig" :table="table"></service-template>
+                        </el-collapse-item>
+                        <el-collapse-item title="service impl" name="8">
+                            <service-impl-template :generate-config="generateConfig" :table="table"></service-impl-template>
+                        </el-collapse-item>
+                    </el-collapse>
+                </div>
             </el-main>
         </el-container>
         <el-dialog
@@ -142,7 +176,10 @@
         },
         data() {
             return {
+                activeTableName:'',
+                activeNames: ['0'],
                 errmsg:'',
+                hasData:false,
                 generateConfig: {},
                 tableList: [],
                 table: {
@@ -210,6 +247,7 @@
             getColumns(tableName) {
                 this.table.tableName = tableName;
                 this.calulateJavaName();
+                this.hasData = false;
                 let res = ipcRenderer.sendSync('getTableStructure',tableName);
                 console.log(this.generateConfig);
                 if(res.status ===0){
@@ -221,6 +259,7 @@
                         bean.camel = this.columnName2camel(bean.name, this.generateConfig.columnPrefix);
                     });
                     this.table.columns = result;
+                    this.hasData = true;
                     console.log(this.table.columns);
                 }else {
                     this.errmsg = res.msg;

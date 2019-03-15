@@ -57,6 +57,22 @@
                     {
                         mysqlType: 'datetime',
                         javaType: 'Date'
+                    },
+                    {
+                        mysqlType: 'bigint',
+                        javaType: 'Integer'
+                    },
+                    {
+                        mysqlType: 'text',
+                        javaType: 'String'
+                    },
+                    {
+                        mysqlType: 'char',
+                        javaType: 'String'
+                    },
+                    {
+                        mysqlType: 'decimal',
+                        javaType: 'BigDecimal'
                     }
                 ]
             }
@@ -78,7 +94,7 @@
             },
             getDbConfig() {
                 this.dbConfig = this.$db.read().get('mysqlConfig').value();
-                this.mysqlType2JavaType = this.$db.read().get('generateConfig.JavaType').value();
+                this.mysqlType2JavaType = this.$db.read().get('generateConfig.JavaType').value() || this.mysqlType2JavaType;
             },
             updateDbConfig() {
                 this.$db.set('generateConfig.JavaType',this.mysqlType2JavaType).write();
