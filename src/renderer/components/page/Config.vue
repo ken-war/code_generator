@@ -62,7 +62,6 @@
             }
         },
         created() {
-
             this.getDbConfig();
         },
         methods: {
@@ -79,6 +78,7 @@
             },
             getDbConfig() {
                 this.dbConfig = this.$db.read().get('mysqlConfig').value();
+                this.mysqlType2JavaType = this.$db.read().get('generateConfig.JavaType').value();
             },
             updateDbConfig() {
                 this.$db.set('generateConfig.JavaType',this.mysqlType2JavaType).write();
