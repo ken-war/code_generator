@@ -63,6 +63,7 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button @click="updateGenerateConfig">更改</el-button>
+                        <el-button @click="getColumns" type="success">刷新表</el-button>
                     </el-form-item>
                 </el-form>
                 <el-row type="flex">
@@ -245,6 +246,7 @@
                 }
             },
             getColumns(tableName) {
+                tableName = tableName|| this.table.tableName;
                 this.table.tableName = tableName;
                 this.calulateJavaName();
                 this.hasData = false;
@@ -255,7 +257,8 @@
                     console.log(result);
                     result.forEach(bean => {
                         bean.javaType = this.sqlType2javaType(bean.typeName);
-                        console.log(this.sqlType2javaType(bean.typeName));
+                        bean.length = bean.columnName.replace(/[^0-9]/ig,"");
+                        console.log(this.sqlType2javaType(bean.typeName))
                         bean.camel = this.columnName2camel(bean.name, this.generateConfig.columnPrefix);
                     });
                     this.table.columns = result;

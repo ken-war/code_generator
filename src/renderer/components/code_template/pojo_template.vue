@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 
@@ -19,9 +20,22 @@ import java.util.Date;
 public class {{table.pojoName}} {
 </pre>
             <pre class="code" v-for="(item, index) in table.columns">
-    /**{{item.remark}}*/
+    /**{{item.remark}} {{item.length||''}}*/
     private {{item.javaType}} {{item.camel}};
 </pre>
+<pre class="code" v-for="(item, index) in table.columns">
+<pre v-if="item.javaType == 'String'">
+    public void set{{item.camel.slice(0, 1).toUpperCase() + item.camel.slice(1) }}({{item.javaType}} {{item.camel}}){
+        if(StringUtils.isNotBlank({{item.camel}}) && {{item.camel}}.length()>{{item.length}}){
+            this.{{item.camel}} = {{item.camel}}.substring(0, {{item.length}});
+            log.error("{{item.camel}}超长截断，长度：{}，内容：{}",{{item.length}},{{item.camel}});
+        }else{
+            this.{{item.camel}} = {{item.camel}};
+        }
+    }
+</pre>
+</pre>
+
             <pre class="code">
 }
 </pre>
@@ -38,6 +52,9 @@ public class {{table.pojoName}} {
         props: {
             generateConfig: Object,
             table: Object
+        },
+        created(){
+            console.log("this.table",this.table);
         },
         methods: {
         }

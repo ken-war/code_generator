@@ -5,12 +5,10 @@
 &lt;!DOCTYPE mapper PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot; &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot; &gt;
 &lt;mapper namespace=&quot;{{generateConfig.javaPackage}}.dao.{{table.daoName}}&quot;&gt;
     &lt;sql id=&quot;Base_Column_List&quot;&gt;
-</pre>
-            <pre class="code" v-for="(item, index) in table.columns">
+</pre><pre class="code" v-for="(item, index) in table.columns">
 <pre v-if="index < table.columns.length-1">
     {{item.name}} {{item.camel}},
-</pre>
-<pre v-if="index === table.columns.length-1">
+</pre><pre v-if="index === table.columns.length-1">
     {{item.name}} {{item.camel}}
 </pre>
 </pre>
