@@ -78,7 +78,6 @@
             }
         },
         created() {
-
             this.getDbConfig();
         },
         methods: {
