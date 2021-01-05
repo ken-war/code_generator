@@ -51,7 +51,7 @@
     }
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "element-ui": "^2.4.8",
     "fs-extra": "^7.0.0",
     "lodash-id": "^0.14.0",
